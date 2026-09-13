@@ -1,6 +1,10 @@
-fastapi[standard]
+fastapi
 uvicorn
 sqlalchemy
 pydantic
 google-genai
 python-dotenv
+passlib[bcrypt]
+bcrypt==4.0.1
+pyjwt
+python-multipart

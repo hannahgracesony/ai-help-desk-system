@@ -1,6 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 from app.database import engine, Base
+# Import models BEFORE create_all so SQLAlchemy knows about the tables
+from app import models
 
 # Create the database tables
 Base.metadata.create_all(bind=engine)
@@ -25,7 +32,8 @@ def read_root():
     return {"message": "Welcome to the AI Help Desk API"}
 
 # Include routers
-from app.routes import users, tickets, ai
+from app.routes import users, tickets, ai, auth
+app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(tickets.router)
 app.include_router(ai.router)

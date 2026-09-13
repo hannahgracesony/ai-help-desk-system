@@ -1,22 +1,29 @@
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-from .models import RoleEnum, TicketStatusEnum, PriorityEnum
 
 # --- USER SCHEMAS ---
 class UserBase(BaseModel):
     name: str
     email: str
-    role: RoleEnum = RoleEnum.user
+    role: str = "user"
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 class UserResponse(UserBase):
     id: int
-    
+    created_at: Optional[datetime] = None
+
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
 
 # --- MESSAGE SCHEMAS ---
 class MessageBase(BaseModel):
@@ -33,34 +40,34 @@ class MessageResponse(MessageBase):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # --- TICKET SCHEMAS ---
 class TicketBase(BaseModel):
     title: str
     description: str
     category: str
-    priority: PriorityEnum = PriorityEnum.medium
+    priority: str = "medium"
 
 class TicketCreate(TicketBase):
     creator_id: int
 
 class TicketUpdate(BaseModel):
-    status: Optional[TicketStatusEnum] = None
-    priority: Optional[PriorityEnum] = None
+    status: Optional[str] = None
+    priority: Optional[str] = None
     category: Optional[str] = None
     assigned_agent_id: Optional[int] = None
 
 class TicketResponse(TicketBase):
     id: int
-    status: TicketStatusEnum
+    status: str
     creator_id: int
-    assigned_agent_id: Optional[int]
-    created_at: datetime
-    updated_at: datetime
+    assigned_agent_id: Optional[int] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TicketDetailResponse(TicketResponse):
     messages: List[MessageResponse] = []

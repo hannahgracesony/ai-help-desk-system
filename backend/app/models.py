@@ -28,7 +28,9 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
-    role = Column(Enum(RoleEnum), default=RoleEnum.user)
+    hashed_password = Column(String)
+    role = Column(String, default="user")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relationships
     tickets_created = relationship("Ticket", foreign_keys="[Ticket.creator_id]", back_populates="creator")
@@ -42,8 +44,8 @@ class Ticket(Base):
     title = Column(String, index=True)
     description = Column(Text)
     category = Column(String, index=True)
-    priority = Column(Enum(PriorityEnum), default=PriorityEnum.medium)
-    status = Column(Enum(TicketStatusEnum), default=TicketStatusEnum.open)
+    priority = Column(String, default="medium")
+    status = Column(String, default="open")
     
     creator_id = Column(Integer, ForeignKey("users.id"))
     assigned_agent_id = Column(Integer, ForeignKey("users.id"), nullable=True)
